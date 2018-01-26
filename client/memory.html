@@ -6,6 +6,17 @@
 	<script src="jquery-3.2.1.min.js"></script>
 	<script>
 
+	$( document ).on( 'click', '#auswahl #btn-backend', function() {
+		$( '#auswahl, #backend' ).toggle();
+
+	});
+
+	$( document ).on( 'click', '#auswahl #btn-spiel', function() {
+		$( '#auswahl, #spiel' ).toggle();
+
+	});
+
+
 	</script>
 	<style>
 #field div {
@@ -56,8 +67,8 @@ airport { display:inline-block; position:absolute; z-index:1;
 <section id="auswahl">
 	<div>
 		<h1>Vokabel - Memory</h1>
-		<button>Vokabel erfassen / bearbeiten</button>
-		<button>Memory starten</button>
+		<button id="btn-backend">Vokabel erfassen / bearbeiten</button>
+		<button id="btn-spiel">Memory starten</button>
 	</div>
 </section>
 <section id="backend">
