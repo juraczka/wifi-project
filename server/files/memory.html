@@ -40,7 +40,7 @@
 
 
 	*{ margin:0; padding:0; }
-body { font:20px Arial; background-image: url("images/bg.jpg");opacity: 0.5;}
+body { font:20px Arial; }
 section {	position:fixed;
 					top:150px;
 					left:400px;
@@ -55,7 +55,7 @@ section {	position:fixed;
 				}
 section > div { max-width:65%; }
 button { font:20px Arial; font-weight:bold; border:none; background:#473C8B; color:#fff; margin:20px; padding:5px 25px; cursor:pointer; border-radius:15px; }
-h1 {color: #473C8B; font: 40px Arial; font-weight:bold;}
+h1 {color: #473C8B; font-size:18px; line-height:60px;  font-weight:bold;}
 #spiel {	display:none; }
 #spiel > div { width:324px; }
 #backend {	display:none; }
@@ -70,12 +70,8 @@ h1 {color: #473C8B; font: 40px Arial; font-weight:bold;}
 	100% { opacity: 1; }
 }
 #logo {	width:45px;	height:45px;}
-#spiel h1 { font-size:18px; line-height:60px; }
 #spiel h1 > * { vertical-align:middle; }
-.airplane {	cursor:pointer; transition:transform 0.5s; width:20px;	height:20px;
-	background:url(black-plane.svg); background-size:20px 20px;
-	 position:absolute; z-index:10; top:0;left:0; transform-origin:50% 50%;  }
-.airplane.selected { background-image:url(black-plane-red.svg); }
+
 
 airport { display:inline-block; position:absolute; z-index:1;
 	border:1px solid #000; background:#ccc; width:16px; height:16px;
@@ -95,6 +91,15 @@ airport { display:inline-block; position:absolute; z-index:1;
 <section id="backend">
 	<div>
 		<h1> Vokabel - Wartung</h1>
+		<form>
+			Kategorie: <input type="text" id="kategorie"><br>
+			<button id="addkategorie">Neue Kategorie anlegen</button>
+		</form>
+		<hr>
+		<h2>Gespeicherte Vokabel</h2>
+		<table id="allvok" border="1">
+			<tr><th>deutsch</th><th>Fremdsprache</th><th>Funktionen</th></tr>
+		</table>
 		<div></div>
 		<button id="back">zurück</button>
 	</div>
@@ -104,7 +109,7 @@ airport { display:inline-block; position:absolute; z-index:1;
 		<h1> Vokabel - Memory</h1>
 		<div></div>
 		<button id="back">zurück</button>
-		<p>Status: <span id="status"></status></p>
+		<p>Status: <span id="status"> </span> </p>
 	</div>
 </section>
 

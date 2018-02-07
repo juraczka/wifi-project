@@ -1,0 +1,42 @@
+Voraussetzungen:
+
+System:
+Datenbank:  SQLITE
+Server:     NodeJs
+Client:     jQuery 3.2.1
+            Browser (Chrome, Firefox)
+            JavaScript aktiviert
+
+Beschreibung:
+Erstellt wird ein Memory Spiel, allerdings nicht mit den
+üblichen Bilderkarten, sondern mit Vokabeln.
+Es muss jeweil ein Paar gefunden werden, eine Karte in
+deutscher Sprache und die dazu passende in der Fremdsprache.
+Das Spielbrett besteht aus 30 Karten (6 Reihen / 5 Zeilen).
+
+2. Auswahlbildschirm:
+Beim Einstieg in die Applikation kann zwíschen einem
+Erfassungsbildschirm (backend) und dem Spiel gewählt werden. Aus jedem
+Applikationsteil kann zur Auswahl zurück gesprungen werden.
+
+3. Erfassungsbildschirm (backend)
+Im Backend können die Kategorien erfasst oder gelöscht werden. Jede
+Kategorie wird später mit beliebig vielen Wortpaaren befüllt. Um das Spiel
+in der jeweiligen Kategorie starten zu können müssen zumindest 15
+Wortpaare angelegt sein.
+
+4. Spiel
+Beim Spiel werden durch Zufall 15 Wortpaare aus der Datenbank geholt und
+auf dem Spielbilschirm verdeckt angezeigt. Der Spieler kann bei einem
+Spielzug zwei Karten aufdecken. Passt das Wortpaar zusammen werden die
+beiden Karten entfernt, im Spielbrett bleiben die vorher belegten Plätze
+frei und der Spieler darf erneut 2 Karten auswählen.
+Wenn auf den beiden aufgedeckten Karten kein zusammen passendes Wortpaar
+enthalten ist, werden die Karten wieder umgedreht und es beginnt ein
+neuer Spielzug.
+
+In der Statuszeile sieht der Spieler die Anzahl seiner Versuche und die
+Spielzeit.
+
+
+
