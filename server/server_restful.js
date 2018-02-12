@@ -20,6 +20,7 @@ app.get( '/', function(req,res) {
 });
 app.use( bp.urlencoded({ extended:true })); // POST Daten parsen
 
+
 // RESTFUL
 var getData = function( dataname, callback ) {
   var dataObj;
