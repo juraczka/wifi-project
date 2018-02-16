@@ -3,7 +3,7 @@
 var fs = require( 'fs' );
 var cp = require( 'child_process' );
 
-var serverFile = 'server_restful.js'; //'server1.js';
+var serverFile = 'testserver.js'; //'server1.js';
 
 var server = cp.fork( serverFile );
 console.log( 'Serverscript gestartet.' );
