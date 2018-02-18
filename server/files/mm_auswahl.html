@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+	<title>Vokabel-Auswahl</title>
+	<meta charset="utf-8">
+	<script src="jquery-3.2.1.min.js"></script>
+	<link href="style.css" rel="stylesheet">
+	<script>
+	$( document ).on( 'click', '#btn-backend', function() {
+		window.open('/mm_backend.html', '_self').value;
+
+	});
+
+	$( document ).on( 'click', '#btn-spiel', function() {
+		window.open('/mm_game.html','_self').value;
+
+	});
+
+	</script>
+	<style>
+	</style>
+</head>
+<body>
+
+	<div>
+		<h1>Vokabel - Memory</h1>
+		<button id="btn-backend">Vokabel erfassen / bearbeiten</button><br>
+		<button id="btn-spiel">Memory starten</button>
+	</div>
+
+</body>
+</html>

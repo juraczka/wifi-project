@@ -18,7 +18,7 @@ app.use( function( request, response, next ) {
 });
 app.use( express.static( 'files' ) );
 app.get( '/', function(req,res) {
-  res.sendFile( __dirname+'/files/memory.html' );
+  res.sendFile( __dirname+'/files/mm_auswahl.html' );
 });
 app.use( bp.urlencoded({ extended:true })); // POST Daten parsen
 
@@ -26,28 +26,54 @@ app.use( bp.urlencoded({ extended:true })); // POST Daten parsen
 var getData = function( stmt, callback ) {
   var file = __dirname+'/db/memory';
   var db = new sqlite3.Database(file);
-  var dataObj, retdata=[];
+  var retdata=[];
 
-  console.log(stmt);
   db.all(stmt, function(err, data) {
-    try {
-      data.forEach(function (row) {
-        console.log('Row: ',row);
-        retdata.push(row.kategorie)
-        console.log('Retdata: ', retdata);
-        callback( retdata );
-      })
-    } catch(e) {
-      callback( [] );
+    if (err) {
+        callback([err]);
     }
+    console.log(data);
+    data.forEach(function (row) {
+      retdata.push(row)
+    });
+    callback( retdata );
   });
   db.close();
 } // getData
 
-app.get( '/test', function( request, response ) {
+var writeData = function( dataname, callback ) {
+  var file = __dirname+'/db/memory';
+  var db = new sqlite3.Database(file);
+  try {
+      db.run(stmt, callback );
+  } catch (e) {
+      return(e, callback)
+  } 
+
+} // writeData
+
+app.get( '/sprachen', function( request, response ) {
   console.log( 'GET all' );
-    getData( 'SELECT * FROM kategorien', function( alleKategorien ) {
-      console.log( {kategorien:alleKategorien } );
-      response.send( {kategorien:alleKategorien } );
+    getData( 'SELECT language, name FROM sprachen', function( alleSprachen ) {
+      response.send( {sprachen:alleSprachen } );
     });
+});
+
+app.post( '/sprachen/insert', function( request, response ) {
+  console.log( 'POST', request.body );
+  stmt = 'INSERT INTO sprachen (language, name) values("' +
+    request.body.language + '","' + request.body.name + '")';
+  console.log(stmt);
+  writeData( stmt, function() {
+    response.send( {result:true} );
+  });
+});
+
+app.post( '/sprachen/delete', function( request, response ) {
+  console.log( 'POST', request.body );
+  stmt = 'DELETE FROM sprachen WHERE language="'+ request.body.language + '"';
+  console.log(stmt);
+  writeData( stmt, function() {
+    response.send( {result:true} );
+  });
 });

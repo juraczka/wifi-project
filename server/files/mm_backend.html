@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+<head>
+	<title>Vokabel-Wartung</title>
+	<meta charset="utf-8">
+	<script src="jquery-3.2.1.min.js"></script>
+	<link href="style.css" rel="stylesheet">
+	<script>
+	meineLanguagesArray = []
+
+	function insertSprache() {
+		var language = $('#alleSprachen option:selected').val();
+		var name = $('#alleSprachen option:selected').text();
+		var vorhanden = false;
+		for (var i = 0; i < meineLanguagesArray.length; i++) {
+			if (meineLanguagesArray[i]==language) {vorhanden=true};
+		}
+		if (vorhanden) {
+			alert('Geht nimmer - gibts schon');
+		}else{
+			$.ajax({
+				url:'http://localhost:5000/sprachen/insert',
+				method:'POST',
+				data:{ 'language': language,
+							 'name': name},
+				success:function( responseVomServer ) {
+					console.log( responseVomServer );
+					meineLanguages();
+				}
+			}); //ajax
+		}; // else
+	}
+
+	function deleteSprache() {
+		var language = $('#meineSprachen option:selected').val();
+		var name = $('#meineSprachen option:selected').text();
+		$.ajax({
+			url:'http://localhost:5000/sprachen/delete',
+			method:'POST',
+			data:{ 'language': language,
+						 'name': name},
+			success:function( responseVomServer ) {
+				console.log( responseVomServer );
+				meineLanguages();
+			}
+		}); //ajax
+	}
+
+	function meineLanguages()
+	  {
+	    $('#meineSprachen').empty();
+	    $.ajax({
+          type: "GET",
+          url:'http://localhost:5000/sprachen',
+          success: function(data){
+            console.log(data.sprachen);
+						meineLanguagesArray = [];
+						for (var i = 0; i < data.sprachen.length; i++) {
+							meineLanguagesArray.push(data.sprachen[i].language);
+							$('#meineSprachen').append('<option value="' + data.sprachen[i].language + '">' + data.sprachen[i].name + '</option>');
+						}
+
+        	}
+      });
+	  };
+
+		function alleLanguages()
+		  {
+		    $('#alleSprachen').empty();
+		    $.ajax({
+	          type: "GET",
+	          url:'https://translation.googleapis.com/language/translate/v2/languages?target=de&key=AIzaSyASqd0scuK0zyyNo71oZ-UiFRd5W7CF5n0',
+	          success: function(data){
+
+	            $.each(data, function(i, d) {
+								for (var i = 0; i < d.languages.length; i++) {
+									//console.log(d.languages[i].language);
+									$('#alleSprachen').append('<option value="' + d.languages[i].language + '">' + d.languages[i].name + '</option>');
+								}
+
+	          	});
+	        	}
+	      });
+		  };
+
+	$( document ).ready( function() {
+		alleLanguages();
+		meineLanguages();
+		$( document ).on('click', '#btn-insert-language', function(event) {
+			event.preventDefault();
+			insertSprache();
+		}); // on click
+
+		$( document ).on('click', '#btn-delete-language', function(event) {
+			event.preventDefault();
+			deleteSprache();
+		}); // on click
+
+
+	});
+
+$( document ).on( 'click', '#btn-auswahl', function() {
+	window.open('/','_self').value;
+
+});
+	</script>
+	<style>
+	</style>
+</head>
+<body>
+
+	<div>
+		<h1>Vokabel - Wartung</h1>
+		Neue Sprache anlegen: <select id="alleSprachen"></select>
+		<button id="btn-insert-language">Speichern</button>
+		</br>
+		Vorhandene Sprachen: <select id="meineSprachen"></select>
+		<button id="btn-delete-language">Löschen</button>
+		</br>
+
+
+		<button id="btn-auswahl">Home</button>
+	</div>
+
+</body>
+</html>
