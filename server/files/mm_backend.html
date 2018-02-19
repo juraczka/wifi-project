@@ -6,14 +6,42 @@
 	<script src="jquery-3.2.1.min.js"></script>
 	<link href="style.css" rel="stylesheet">
 	<script>
-	meineLanguagesArray = []
+	var meineLanguagesArray = [];
+
+	var erzeugeTabelle = function() {
+		$( '#vokabeltab tr' ).remove();
+		$( '<tr id="tabelheader">' ).appendTo( '#vokabeltab' );
+
+		for (i in meineLanguagesArray){
+			$('<th>')
+				.appendTo( 'tr' )
+				.html( meineLanguagesArray[i].name );
+		}
+		for ( i in meineLanguagesArray ) {
+			var button = $( '<button>' ).html( 'Löschen' ).attr('data-nr',i);
+			button.on( 'click', function() {
+				var i = $(this).attr('data-nr');
+				$.ajax({
+					url:'http:localhost:5000/vokabel/delete',
+					method:'POST',
+					data:{id:i},
+					success:function(){
+						alert( 'weg ist' );
+						erzeugeTabelle();
+					}
+				});//ajax
+			});//button.onclick
+		}; //for ...
+	};  // erzeuge Tabelle
+
 
 	function insertSprache() {
 		var language = $('#alleSprachen option:selected').val();
 		var name = $('#alleSprachen option:selected').text();
 		var vorhanden = false;
 		for (var i = 0; i < meineLanguagesArray.length; i++) {
-			if (meineLanguagesArray[i]==language) {vorhanden=true};
+			console.log(meineLanguagesArray);
+			if (meineLanguagesArray[i].language==language) {vorhanden=true};
 		}
 		if (vorhanden) {
 			alert('Geht nimmer - gibts schon');
@@ -49,19 +77,21 @@
 	function meineLanguages()
 	  {
 	    $('#meineSprachen').empty();
+			meineLanguagesArray.splice(0, meineLanguagesArray.length);
 	    $.ajax({
           type: "GET",
+					async: false,
           url:'http://localhost:5000/sprachen',
           success: function(data){
-            console.log(data.sprachen);
-						meineLanguagesArray = [];
 						for (var i = 0; i < data.sprachen.length; i++) {
-							meineLanguagesArray.push(data.sprachen[i].language);
+							meineLanguagesArray.push( {language:data.sprachen[i].language, name:data.sprachen[i].name });
+							console.log('Meine Languages Array: ', meineLanguagesArray);
 							$('#meineSprachen').append('<option value="' + data.sprachen[i].language + '">' + data.sprachen[i].name + '</option>');
 						}
-
         	}
       });
+
+		erzeugeTabelle();
 	  };
 
 		function alleLanguages()
@@ -86,6 +116,7 @@
 	$( document ).ready( function() {
 		alleLanguages();
 		meineLanguages();
+
 		$( document ).on('click', '#btn-insert-language', function(event) {
 			event.preventDefault();
 			insertSprache();
@@ -117,8 +148,10 @@ $( document ).on( 'click', '#btn-auswahl', function() {
 		Vorhandene Sprachen: <select id="meineSprachen"></select>
 		<button id="btn-delete-language">Löschen</button>
 		</br>
+		<h2>Gespeicherte Vokabel</h2>
+		<table id="vokabeltab" border="1">
 
-
+		</table>
 		<button id="btn-auswahl">Home</button>
 	</div>
 

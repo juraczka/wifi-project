@@ -48,7 +48,7 @@ var writeData = function( dataname, callback ) {
       db.run(stmt, callback );
   } catch (e) {
       return(e, callback)
-  } 
+  }
 
 } // writeData
 
