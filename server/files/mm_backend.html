@@ -4,8 +4,17 @@
 	<title>Vokabel-Wartung</title>
 	<meta charset="utf-8">
 	<script src="jquery-3.2.1.min.js"></script>
-	<link href="style.css" rel="stylesheet">
+	<script src="/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="jquery-ui-1.12.1/jquery-ui.css">
+	<link rel="stylesheet" href="style.css" >
 	<script>
+	$( function() {
+    $( "#accordion" ).accordion({
+			heightStyle: 'content',
+			header: "h1"
+		});
+  } );
+
 	var meineLanguagesArray = [];
 
 	var erzeugeTabelle = function() {
@@ -139,21 +148,30 @@ $( document ).on( 'click', '#btn-auswahl', function() {
 	</style>
 </head>
 <body>
-
 	<div>
-		<h1>Vokabel - Wartung</h1>
-		Neue Sprache anlegen: <select id="alleSprachen"></select>
-		<button id="btn-insert-language">Speichern</button>
-		</br>
-		Vorhandene Sprachen: <select id="meineSprachen"></select>
-		<button id="btn-delete-language">Löschen</button>
-		</br>
-		<h2>Gespeicherte Vokabel</h2>
-		<table id="vokabeltab" border="1">
+		<h1>Vokabel - Wartung</h1></div>
+		<div id="accordion">
 
-		</table>
-		<button id="btn-auswahl">Home</button>
-	</div>
-
+			<h1>Sprachen - Settings</h1>
+			<div>
+				<p>
+					Neue Sprache anlegen: <select id="alleSprachen"></select>
+					<button id="btn-insert-language">Speichern</button>
+					</br>
+					Vorhandene Sprachen: <select id="meineSprachen"></select>
+					<button id="btn-delete-language">Löschen</button>
+				</br><hr>
+				</p>
+			</div>
+			<h1>Gespeicherte Vokabel</h1>
+			<div>
+				<p>
+					<table id="vokabeltab" border="1">
+					</table>
+				</p>
+			</div>
+		</div>
+	<button id="btn-auswahl">Home</button>
+</div>
 </body>
 </html>
