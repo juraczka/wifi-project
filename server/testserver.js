@@ -33,6 +33,7 @@ var getData = function( stmt, callback ) {
         callback([err]);
     }
     console.log(data);
+
     data.forEach(function (row) {
       retdata.push(row)
     });
@@ -60,20 +61,27 @@ app.get( '/sprachen', function( request, response ) {
 });
 
 app.post( '/sprachen/insert', function( request, response ) {
-  console.log( 'POST', request.body );
-  stmt = 'INSERT INTO sprachen (language, name) values("' +
-    request.body.language + '","' + request.body.name + '")';
-  console.log(stmt);
-  writeData( stmt, function() {
-    response.send( {result:true} );
+  var file = __dirname+'/db/memory';
+  var db = new sqlite3.Database(file);
+  try {
+      stmt = 'INSERT INTO sprachen (language, name) values("' +
+        request.body.language + '","' + request.body.name + '")'
+      db.run(stmt );
+      stmt = 'ALTER TABLE vokabel ADD ' + request.body.language + ' varchar';
+      db.run(stmt );
+  } catch (e) {
+      response.send( {error: e } );
+  }
+  response.send( {result:true} );
   });
-});
 
-app.post( '/sprachen/delete', function( request, response ) {
-  console.log( 'POST', request.body );
-  stmt = 'DELETE FROM sprachen WHERE language="'+ request.body.language + '"';
-  console.log(stmt);
-  writeData( stmt, function() {
-    response.send( {result:true} );
+
+
+  app.post( '/sprachen/delete', function( request, response ) {
+    console.log( 'POST', request.body );
+    stmt = 'DELETE FROM sprachen WHERE language="'+ request.body.language + '"';
+    console.log(stmt);
+    writeData( stmt, function() {
+      response.send( {result:true} );
+    });
   });
-});
