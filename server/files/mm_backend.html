@@ -31,7 +31,7 @@
 			button.on( 'click', function() {
 				var i = $(this).attr('data-nr');
 				$.ajax({
-					url:'http:localhost:5000/vokabel/delete',
+					url:'http://localhost:5000/vokabel/delete',
 					method:'POST',
 					data:{id:i},
 					success:function(){
