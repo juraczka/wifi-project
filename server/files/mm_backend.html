@@ -5,6 +5,8 @@
 	<meta charset="utf-8">
 	<script src="jquery-3.2.1.min.js"></script>
 	<script src="/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="jquery-ui-1.12.1/jquery-ui.css">
 	<link rel="stylesheet" href="style.css" >
 	<script>
@@ -18,29 +20,77 @@
 	var meineLanguagesArray = [];
 
 	var erzeugeTabelle = function() {
-		$( '#vokabeltab tr' ).remove();
-		$( '<tr id="tabelheader">' ).appendTo( '#vokabeltab' );
+		$( '#vokabeltab' ).empty();
+		$( '<tr id="tableheader">' ).appendTo( '#vokabeltab' );
 
 		for (i in meineLanguagesArray){
 			$('<th>')
 				.appendTo( 'tr' )
 				.html( meineLanguagesArray[i].name );
+			$( '<td contenteditable>' ) // erste Zeile leer für neue Vokabel
+				.appendTo( '#vokabeltab' )
+				.attr('data-id',0)
+				.attr('data-language',meineLanguagesArray[i].language)
+				.html(meineLanguagesArray[i].name);
 		}
-		for ( i in meineLanguagesArray ) {
-			var button = $( '<button>' ).html( 'Löschen' ).attr('data-nr',i);
-			button.on( 'click', function() {
-				var i = $(this).attr('data-nr');
-				$.ajax({
-					url:'http://localhost:5000/vokabel/delete',
-					method:'POST',
-					data:{id:i},
-					success:function(){
-						alert( 'weg ist' );
-						erzeugeTabelle();
+
+
+		$.ajax({
+			url:'http://localhost:5000/vokabel',
+			method:'GET',
+			success:function(data){
+				var alle = data.vokabel;
+
+				for (i in alle) {
+					$( '<tr>' ).appendTo( '#vokabeltab' );
+					for (j in alle[i]) {
+						if (j != 'id') {
+							$( '<td contenteditable>' )
+								.appendTo( '#vokabeltab' )
+								.attr('data-id', alle[i].id)
+								.attr('data-language',alle[i][j])
+								.html( alle[i][j] );
+						}else {
+							var satznummer = alle[i].id;
+							console.log('ALLE: ', alle, alle[i].id, satznummer);
+							var button_del = $( '<button>' ).html( 'Löschen' ).attr('data-nr',alle[i]);
+							button_del.on( 'click', function() {
+								var i = $(this).attr('data-nr', j); // id aus DatenbankTabelle
+								$.ajax({
+									url:'http://localhost:5000/vokabel/delete',
+									method:'POST',
+									data:{ 'id': satznummer },
+									success:function(){
+										alert( 'weg ist' );
+										erzeugeTabelle();
+									}
+								});//ajax
+							});//button.onclick
+							var button_sav = $( '<button>' ).html( 'Speichern' ).attr('data-nr',satznummer);
+							button_sav.on( 'click', function() {
+								var i = $(this).attr('data-nr', satznummer); // id aus DatenbankTabelle
+
+								console.log('Vokabel: ',$('td').attr('data-id')); // hier weiter - (this).attr('data-nr') rowId, (td mit = rowId).html() sollte der Inhalt sein (hoffentlich)
+								$.ajax({
+									url:'http://localhost:5000/vokabel/insert',
+									method:'POST',
+									data:{ 'id': satznummer },
+									success:function(){
+										alert( 'gespeichert ist' );
+										erzeugeTabelle();
+									}
+								});//ajax
+							});//button.onclick
+						} // else
+
 					}
-				});//ajax
-			});//button.onclick
-		}; //for ...
+					$( '<td>' )
+						.appendTo( '#vokabeltab' )
+						.append( button_sav )
+						.append( button_del );
+				}
+			}
+		});//ajax
 	};  // erzeuge Tabelle
 
 
@@ -94,7 +144,7 @@
           success: function(data){
 						for (var i = 0; i < data.sprachen.length; i++) {
 							meineLanguagesArray.push( {language:data.sprachen[i].language, name:data.sprachen[i].name });
-							console.log('Meine Languages Array: ', meineLanguagesArray);
+							//console.log('Meine Languages Array: ', meineLanguagesArray);
 							$('#meineSprachen').append('<option value="' + data.sprachen[i].language + '">' + data.sprachen[i].name + '</option>');
 						}
         	}
@@ -166,7 +216,7 @@ $( document ).on( 'click', '#btn-auswahl', function() {
 			<h3>Gespeicherte Vokabel</h3>
 			<div>
 				<p>
-					<table id="vokabeltab" border="1">
+					<table class="table table-hover" id="vokabeltab" border="1">
 					</table>
 				</p>
 			</div>
