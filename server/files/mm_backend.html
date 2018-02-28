@@ -48,7 +48,7 @@
 							$( '<td contenteditable>' )
 								.appendTo( '#vokabeltab' )
 								.attr('data-id', alle[i].id)
-								.attr('data-language',alle[i][j])
+								.attr('data-language',j)
 								.html( alle[i][j] );
 						}else {
 							var satznummer = alle[i].id;
@@ -69,14 +69,18 @@
 							var button_sav = $( '<button>' ).html( 'Speichern' ).attr('data-nr',satznummer);
 							button_sav.on( 'click', function() {
 								var i = $(this).attr('data-nr', satznummer); // id aus DatenbankTabelle
+								insObj = {}
+								for (var z = 0; z < meineLanguagesArray.length; z++) {
+									insObj[meineLanguagesArray[z].language] = $('td[data-id=' + satznummer + '][data-language="' + meineLanguagesArray[z].language + '"]').html();
+								};
 
-								console.log('Vokabel: ',$('td').attr('data-id')); // hier weiter - (this).attr('data-nr') rowId, (td mit = rowId).html() sollte der Inhalt sein (hoffentlich)
 								$.ajax({
 									url:'http://localhost:5000/vokabel/insert',
 									method:'POST',
-									data:{ 'id': satznummer },
+									data:{ 'id': satznummer ,
+								         'daten': insObj},
 									success:function(){
-										alert( 'gespeichert ist' );
+										alert( 'Vokabel gespeichert ' );
 										erzeugeTabelle();
 									}
 								});//ajax

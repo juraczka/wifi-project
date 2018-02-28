@@ -1,6 +1,7 @@
 var express    = require("express");
 var bp = require( 'body-parser' );
 var mysql      = require('mysql');
+var $ = require('jquery');
 
 var db_config = {
   host     : 'juraczka.eu',
@@ -130,13 +131,58 @@ app.post( '/sprachen/delete', function( request, response ) {
 });
 
 app.post( '/vokabel/delete', function( request, response ) {
-  console.log(request.body);
   connection.query( 'DELETE FROM vokabel WHERE id = "' + request.body.id + '"', function( err, result ) {
     if (!err) {
       //console.log('The stmt1-del-solution is: ');
 
     } else{
       console.log('Error while performing delete vokabel / del');
+    };
+  }); // stmt 1
+  //// connection.end();
+
+  response.send( {result:true} );
+});
+
+app.post( '/vokabel/insert', function( request, response ) {
+  console.log(request.body.id);
+  console.log(request.body.daten);
+  stmt = '';
+  arrKey = []
+  arrVal = []
+  $.each( request.body.daten, function( key, value ) {
+    arrKey.push(key);
+    arrVal.push(value);
+  });
+  if (request.body.id == -1) {
+    // INSERT
+    stmt = 'INSERT INTO vokabel (';
+    for (var i = 0; i < arrKey.length; i++) {
+      stmt += arrKey[i]
+    }
+    stmt += ') values (';
+    for (var i = 0; i < arrVal.length; i++) {
+      stmt += arrVal[i]
+    }
+    stmt += ')';
+  }else {
+    // UPDATE
+    stmt = 'UPDATE vokabel SET ';
+    for (var i = 0; i < arrKey.length; i++) {
+      if (i>0) {
+        stmt += ','; //kein Beistrich nach dem letzten Paar
+      }
+      stmt += arrKey[i] + '=';
+      stmt += arrVal[i];
+    }
+    stmt += 'WHERE id = ' + request.body.id;
+  }
+  connection.query( stmt, function( err, result ) {
+    if (!err) {
+      //console.log('The stmt1-del-solution is: ');
+
+    } else{
+      console.log('Error while performing insert/update vokabel ');
     };
   }); // stmt 1
   //// connection.end();
