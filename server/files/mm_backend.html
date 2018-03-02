@@ -68,25 +68,20 @@
 
 				quelle = $('td[data-id=' + satznummerX + '][data-language="de"]').html();
 				ziel   = meineLanguagesArray[z].language;
+				$.ajax({
+	          type: "POST",
+	          url: "https://www.googleapis.com/language/translate/v2",
+	          data: { key: "AIzaSyASqd0scuK0zyyNo71oZ-UiFRd5W7CF5n0",  target: ziel, q: quelle },
+	          dataType: 'json',
+						async: false,
+	          success: function (data) {
+											 $('td[data-id=' + satznummerX + '][data-language="' + ziel + '"]').html( data.data.translations[0].translatedText);
+	                    },
+	          error: function (data) {
+	                   alert('fail');
+	                 }
+	     }); // ajax
 
-				console.log(satznummerX, quelle, ziel);
-				if (ziel!='de') {
-					$.ajax({
-		          type: "POST",
-		          url: "https://www.googleapis.com/language/translate/v2",
-		          data: { key: "AIzaSyASqd0scuK0zyyNo71oZ-UiFRd5W7CF5n0",  target: ziel, q: quelle },
-		          dataType: 'json',
-		          success: function (data) {
-		                     alert(data.data.translations[0].translatedText);
-												 console.log('Vorher: ', $('td[data-id=' + satznummerX + '][data-language="' + ziel + '"]').html());
-												 $('td[data-id=' + satznummerX + '][data-language="' + ziel + '"]').html( data.data.translations[0].translatedText);
-												 console.log('Nachher: ', $('td[data-id=' + satznummerX + '][data-language="' + ziel + '"]').html());
-		                    },
-		          error: function (data) {
-		                   alert('fail');
-		                 }
-		       }); // ajax
-				};
 			};
 
 		});//button.onclick
