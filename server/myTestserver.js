@@ -1,13 +1,12 @@
 var express    = require("express");
 var bp = require( 'body-parser' );
 var mysql      = require('mysql');
-var $ = require('jquery');
 
 var db_config = {
   host     : 'juraczka.eu',
   user     : 'd029878b',
   password : 'mnif4674',
-  database : 'd029878b'
+  database : 'd029878b',
 };
 
 var connection;
@@ -150,19 +149,25 @@ app.post( '/vokabel/insert', function( request, response ) {
   stmt = '';
   arrKey = []
   arrVal = []
-  $.each( request.body.daten, function( key, value ) {
+  for (let key in request.body.daten) {
     arrKey.push(key);
-    arrVal.push(value);
-  });
+    arrVal.push(request.body.daten[key]);
+  };
   if (request.body.id == -1) {
     // INSERT
     stmt = 'INSERT INTO vokabel (';
     for (var i = 0; i < arrKey.length; i++) {
+      if (i>0) {
+        stmt += ','; //kein Beistrich nach dem letzten Paar
+      }
       stmt += arrKey[i]
     }
     stmt += ') values (';
     for (var i = 0; i < arrVal.length; i++) {
-      stmt += arrVal[i]
+      if (i>0) {
+        stmt += ','; //kein Beistrich nach dem letzten Paar
+      }
+      stmt += '"' + arrVal[i] + '"';
     }
     stmt += ')';
   }else {
@@ -173,10 +178,11 @@ app.post( '/vokabel/insert', function( request, response ) {
         stmt += ','; //kein Beistrich nach dem letzten Paar
       }
       stmt += arrKey[i] + '=';
-      stmt += arrVal[i];
+      stmt += '"' + arrVal[i] + '"';
     }
-    stmt += 'WHERE id = ' + request.body.id;
+    stmt += ' WHERE id = ' + request.body.id;
   }
+  console.log(stmt);
   connection.query( stmt, function( err, result ) {
     if (!err) {
       //console.log('The stmt1-del-solution is: ');
