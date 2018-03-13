@@ -3,10 +3,10 @@ var bp = require( 'body-parser' );
 var mysql      = require('mysql');
 
 var db_config = {
-  host     : 'juraczka.eu',
-  user     : 'd029878b',
+  host     : 'localhost',
+  user     : 'root',
   password : 'mnif4674',
-  database : 'd029878b',
+  database : 'wifi',
 };
 
 var connection;
