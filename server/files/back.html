@@ -8,7 +8,7 @@
 <script>
 
 $( document ).on( 'click', '#btn-auswahl', function() {
-	window.open('/','_self').value;
+	window.open('/mem.html','_self');
 
 });
 
@@ -251,27 +251,7 @@ var erzeugeTabelle = function() {
 };  // erzeuge Tabelle
 </script>
 <style>
-div#memory_board{
- background:#CCC;
- border:#999 1px solid;
- width:80%;
- height:auto;
- padding:24px;
- margin:0px auto;
-}
-div#memory_board > div{
- background: url(memory.jpg) no-repeat;
- border:#000 1px solid;
- width:71px;
- height:71px;
- float:left;
- margin:10px;
- padding:20px;
- font-size:16px;
-	word-wrap: break-word;
- cursor:pointer;
- text-align:center;
-}
+
 </style>
 </head>
 <body>
@@ -292,6 +272,7 @@ div#memory_board > div{
 
 		<div id="hinweis"></div>
 		<div id="fehler"></div>
+		<input type="submit" id="btn-auswahl" value="Memory spielen">
     <hr>
 
     <div id="memory_board"></div>

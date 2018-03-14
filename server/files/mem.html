@@ -31,7 +31,7 @@ div#memory_board > div{
 </style>
 <script>
 $( document ).on( 'click', '#btn-auswahl', function() {
-	window.open('/','_self').value;
+	window.open('/back.html','_self');
 
 });
 $( document ).on( 'click', '#starten', function() {
@@ -188,8 +188,8 @@ function memoryFlipTile(tile,val){
 				<label for="sprache2">Sprache-2 wählen</label>
 				<select name="sprache2" id="sprache2"></select>
         <br>
-        <button id="starten">Spiel starten</button>
-        <button id="btn-auswahl">Home</button>
+        <input type="submit" id="starten" value="Spiel starten">
+        <input type="submit" id="btn-auswahl" value="Vokabel erfassen">
 			</fielset><br>
 
 		<div id="hinweis"></div>

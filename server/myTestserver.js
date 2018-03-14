@@ -46,7 +46,7 @@ app.use( function( request, response, next ) {
 });
 app.use( express.static( 'files' ) );
 app.get( '/', function(req,res) {
-  res.sendFile( __dirname+'/files/mm_auswahl.html' );
+  res.sendFile( __dirname+'/files/mem.html' );
 });
 app.use( bp.urlencoded({ extended:true })); // POST Daten parsen
 
