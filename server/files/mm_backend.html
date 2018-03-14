@@ -131,6 +131,7 @@
 						}else {
 							var satznummer = alle[i].id;
 							console.log('ALLE: ', alle, alle[i].id, satznummer);
+							button_trans = make_button_translate(satznummer)
 							button_del = make_button_del(satznummer)
 							button_sav = make_button(satznummer); // save
 						} // else
@@ -139,7 +140,8 @@
 					$( '<td>' )
 						.appendTo( '#vokabeltab' )
 						.append( button_sav )
-						.append( button_del );
+						.append( button_del )
+						.append( button_trans );
 				}
 			}
 		});//ajax

@@ -2,11 +2,13 @@ var express    = require("express");
 var bp = require( 'body-parser' );
 var mysql      = require('mysql');
 
+var config = require('./config.js');
+
 var db_config = {
-  host     : 'localhost',
-  user     : 'root',
-  password : 'mnif4674',
-  database : 'wifi',
+    host     : config.db.host,
+    user     : config.db.username,
+    password : config.db.password,
+    database : config.db.dbname
 };
 
 var connection;

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html>
+<meta charset="utf-8">
+<script src="jquery-3.2.1.min.js"></script>
+<link rel="stylesheet" type="text/css" href="style.css">
+<head>
+<script>
+
+$( document ).on( 'click', '#btn-auswahl', function() {
+	window.open('/','_self').value;
+
+});
+
+var meineLanguagesArray = [];
+
+function insertSprache() {
+	var language = $('#alleSprachen option:selected').val();
+	var name = $('#alleSprachen option:selected').text();
+	var vorhanden = false;
+	for (var i = 0; i < meineLanguagesArray.length; i++) {
+		console.log(meineLanguagesArray);
+		if (meineLanguagesArray[i].language==language) {vorhanden=true};
+	}
+	if (vorhanden) {
+		$('#fehler').html('Geht nimmer - gibts schon');
+	}else{
+		$.ajax({
+			url:'http://82.165.22.224:5000/sprachen/insert',
+			method:'POST',
+			data:{ 'language': language,
+						 'name': name},
+			success:function( responseVomServer ) {
+				console.log( responseVomServer );
+				meineLanguages();
+			}
+		}); //ajax
+	}; // else
+}
+
+function deleteSprache() {
+	var language = $('#meineSprachen option:selected').val();
+	var name = $('#meineSprachen option:selected').text();
+	$.ajax({
+		url:'http://82.165.22.224:5000/sprachen/delete',
+		method:'POST',
+		data:{ 'language': language,
+					 'name': name},
+		success:function( responseVomServer ) {
+			console.log( responseVomServer );
+			meineLanguages();
+		}
+	}); //ajax
+}
+
+var make_button_del = function( satznummer ) {
+	var button_del = $( '<button>' ).html( 'Löschen' ).attr('data-nr',satznummer);
+	button_del.on( 'click', function() {
+		var satznummerX = $(this).attr('data-nr'); // id aus DatenbankTabelle
+		$.ajax({
+			url:'http://82.165.22.224:5000/vokabel/delete',
+			method:'POST',
+			data:{ 'id': satznummerX },
+			success:function(){
+				$('#hinweis').html('Vokabel gelöscht');
+				erzeugeTabelle();
+			}
+		});//ajax
+	});//button.onclick
+	return button_del;
+};
+var make_button = function( satznummer ){
+	var button_sav = $( '<button>' ).html( 'Speichern' ).attr('data-nr',satznummer);
+	button_sav.on( 'click', function() {
+		var satznummerX = $(this).attr('data-nr'); // id aus DatenbankTabelle
+		insObj = {}
+		for (var z = 0; z < meineLanguagesArray.length; z++) {
+			insObj[meineLanguagesArray[z].language] = $('td[data-id=' + satznummerX + '][data-language="' + meineLanguagesArray[z].language + '"]').html();
+		};
+
+		$.ajax({
+			url:'http://82.165.22.224:5000/vokabel/insert',
+			method:'POST',
+			data:{ 'id': satznummerX ,
+						 'daten': insObj},
+			success:function(){
+				$('#hinweis').html('Vokabel gespeichert');
+				erzeugeTabelle();
+			}
+		});//ajax
+	});//button.onclick
+	return button_sav;
+}; // make_button
+
+var make_button_translate = function( satznummer ){
+	var button_translate = $( '<button>' ).html( 'Übersetzen' ).attr('data-nr',satznummer);
+	button_translate.on( 'click', function() {
+		var satznummerX = $(this).attr('data-nr'); // id aus DatenbankTabelle
+		insObj = {}
+		for (var z = 0; z < meineLanguagesArray.length; z++) {
+			insObj[meineLanguagesArray[z].language] = $('td[data-id=' + satznummerX + '][data-language="' + meineLanguagesArray[z].language + '"]').html();
+
+			quelle = $('td[data-id=' + satznummerX + '][data-language="de"]').html();
+			ziel   = meineLanguagesArray[z].language;
+			$.ajax({
+					type: "POST",
+					url: "https://www.googleapis.com/language/translate/v2",
+					data: { key: "AIzaSyASqd0scuK0zyyNo71oZ-UiFRd5W7CF5n0",  target: ziel, q: quelle },
+					dataType: 'json',
+					async: false,
+					success: function (data) {
+										 $('td[data-id=' + satznummerX + '][data-language="' + ziel + '"]').html( data.data.translations[0].translatedText);
+
+										},
+					error: function (data) {
+									 $('#fehler').html('Fehler in der Übersetzungsroutine');
+								 }
+		 }); // ajax
+
+		};
+
+	});//button.onclick
+	return button_translate;
+}; // make_button_translate
+
+function meineLanguages()
+	{
+		$('#meineSprachen').empty();
+		meineLanguagesArray.splice(0, meineLanguagesArray.length);
+		$.ajax({
+				type: "GET",
+				url:'http://82.165.22.224:5000/sprachen',
+				success: function(data){
+					for (var i = 0; i < data.sprachen.length; i++) {
+						meineLanguagesArray.push( {language:data.sprachen[i].language, name:data.sprachen[i].name });
+						//console.log('Meine Languages Array: ', meineLanguagesArray);
+						$('#meineSprachen').append('<option value="' + data.sprachen[i].language + '">' + data.sprachen[i].name + '</option>');
+					}
+					erzeugeTabelle();
+				}
+		});
+
+
+	};
+
+	function alleLanguages() {
+		$('#alleSprachen').empty();
+		$.ajax({
+				type: "GET",
+				url:'https://translation.googleapis.com/language/translate/v2/languages?target=de&key=AIzaSyASqd0scuK0zyyNo71oZ-UiFRd5W7CF5n0',
+				success: function(data){
+
+					$.each(data, function(i, d) {
+						for (var i = 0; i < d.languages.length; i++) {
+							//console.log(d.languages[i].language);
+							$('#alleSprachen').append('<option value="' + d.languages[i].language + '">' + d.languages[i].name + '</option>');
+						}
+
+					});
+				}
+		}); // ajax
+	};
+
+	$( document ).ready( function() {
+		alleLanguages();
+		meineLanguages();
+
+		$( document ).on('click', '#btn-insert-language', function(event) {
+			event.preventDefault();
+			insertSprache();
+		}); // on click
+
+		$( document ).on('click', '#btn-delete-language', function(event) {
+			event.preventDefault();
+			deleteSprache();
+		}); // on click
+
+
+	});
+
+var initAll = function() {
+	$('#meldung').html('');
+	$('#fehler').html('');
+	$('#hinweis').html('');
+}
+
+var erzeugeTabelle = function() {
+	initAll();
+	$('#vokabeltab').empty();
+	$('<table id="vokabeltab">').appendTo('#memory_board');
+	$( '<tr>' ).appendTo( '#vokabeltab' );
+
+	for (i in meineLanguagesArray){
+		$('<th>')
+			.appendTo( 'tr' )
+			.html( meineLanguagesArray[i].name );
+		$( '<td contenteditable>' ) // erste Zeile leer für neue Vokabel
+			.appendTo( '#vokabeltab' )
+			.attr('data-id',-1)
+			.attr('data-language',meineLanguagesArray[i].language);
+			//.html('neues Vokabel: ' + meineLanguagesArray[i].name );
+
+	}
+	var button_sav = make_button(-1);
+	$( '<td>' )
+		.appendTo( '#vokabeltab' )
+		.append( make_button(-1) );
+	var button_translate = make_button_translate(-1);
+	$( '<td>' )
+		.appendTo( '#vokabeltab' );
+	$( '<td>' )
+		.appendTo( '#vokabeltab' )
+		.append( button_translate );
+
+
+	$.ajax({
+		url:'http://82.165.22.224:5000/vokabel',
+		method:'GET',
+		success:function(data){
+			var alle = data.vokabel;
+
+			for (i in alle) {
+				$( '<tr>' ).appendTo( '#vokabeltab' );
+				for (j in alle[i]) {
+					if (j != 'id') {
+						$( '<td contenteditable>' )
+							.appendTo( '#vokabeltab' )
+							.attr('data-id', alle[i].id)
+							.attr('data-language',j)
+							.html( alle[i][j] );
+					}else {
+						var satznummer = alle[i].id;
+						button_del = make_button_del(satznummer)
+						button_translate = make_button_translate( satznummer );
+						button_sav = make_button(satznummer); // save
+					} // else
+
+				}
+				$( '<td>' )
+					.appendTo( '#vokabeltab' )
+					.append( button_sav );
+				$( '<td>' )
+					.appendTo( '#vokabeltab' )
+					.append( button_del );
+				$( '<td>' )
+					.appendTo( '#vokabeltab' )
+					.append( button_translate );
+			}
+		}
+	});//ajax
+};  // erzeuge Tabelle
+</script>
+
+</head>
+<body>
+		<h1>Vokabel - Spiel</h1>
+		<div>
+			<form action="?">
+				<label for="alleSprachen">Neue Sprache anlegen</label>
+				<select id="alleSprachen" placeholder="Sprachauswahl"></select>
+				<input type="submit" id="btn-insert-language" value="Speichern">
+				</br>
+				<label for="meineSprachen">Vorhandene Sprachen</label>
+				<select id="meineSprachen"></select>
+				<input type="submit" id="btn-delete-language" value="Löschen">
+
+			</from>
+			</br><hr>
+		</div>
+
+		<div id="hinweis"></div>
+		<div id="fehler"></div>
+    <hr>
+
+    <div id="memory_board"></div>
+
+    <!--
+    <script>getVokabel('de','lt', 12);</script>
+    -->
+</body>
+</html>

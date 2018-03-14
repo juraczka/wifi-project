@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+
+<html>
+<meta charset="utf-8">
+<script src="jquery-3.2.1.min.js"></script>
+<head>
+
+<style>
+div#memory_board{
+	background:#CCC;
+	border:#999 1px solid;
+	width:800px;
+	height:540px;
+	padding:24px;
+	margin:0px auto;
+}
+div#memory_board > div{
+	background: url(memory.jpg) no-repeat;
+	border:#000 1px solid;
+	width:71px;
+	height:71px;
+	float:left;
+	margin:10px;
+	padding:20px;
+	font-size:16px;
+  word-wrap: break-word;
+	cursor:pointer;
+	text-align:center;
+}
+</style>
+<script>
+$( document ).on( 'click', '#btn-auswahl', function() {
+	window.open('/','_self').value;
+
+});
+$( document ).on( 'click', '#starten', function() {
+	s1 = $('#sprache1').find(':selected').val();
+  s2 = $('#sprache2').find(':selected').val();
+  initAll();
+  if (pruefSprache(s1, s2)){
+    console.log('SPIEL STARTEN');
+    getVokabel(s1, s2, 12);
+  }
+});
+var meineLanguagesArray = [];
+var memory_array = [];
+var memory_id_array = [];
+var memory_values = [];
+var memory_tile_ids = [];
+var tiles_flipped = 0;
+// Ausgabefelder leeren
+var initAll = function() {
+	$('#meldung').html('');
+	$('#fehler').html('');
+	$('#hinweis').html('');
+}
+// Sprachauswahl
+function meineLanguages()
+	{
+		var sprache1='XXX', sprache2='XXX';
+		$('#meineSprachen').empty();
+		meineLanguagesArray.splice(0, meineLanguagesArray.length);
+		$.ajax({
+				type: "GET",
+				url:'http://82.165.22.224:5000/sprachen',
+				success: function(data){
+					for (var i = 0; i < data.sprachen.length; i++) {
+						meineLanguagesArray.push( {language:data.sprachen[i].language, name:data.sprachen[i].name } );
+						$('#sprache1')
+							.append('<option value="' + meineLanguagesArray[i].language + '">' + meineLanguagesArray[i].name + '</option>');
+
+						$('#sprache2')
+							.append('<option value="' + meineLanguagesArray[i].language + '">' + meineLanguagesArray[i].name + '</option>');
+
+					}; 	// for
+				} 	// success
+			}); // ajax
+	};
+var pruefSprache = function(sprache1, sprache2){
+	var starten = false;
+	if ( sprache1 == sprache2 ){
+		$('#fehler').html('Bitte 2 unterschiedliche Sprachen wählen')
+	} else if (sprache1 == 'XXX') {
+		$('#hinweis').html('Bitte Sprache-1 wählen');
+	} else if (sprache2 == 'XXX') {
+		$('#hinweis').html('Bitte Sprache-2 wählen');
+	}	else {
+		$('#hinweis').html('Los gehts ...')
+		starten = true;
+	}
+	return starten;
+}
+// Vokabel vom Server holen
+var getVokabel = function(sprache1, sprache2, anzahlPaare){
+  memory_array = [];
+  memory_id_array = [];
+	$.ajax({
+		url:'http://82.165.22.224:5000/vokabel',
+		method:'GET',
+		success:function(data){
+			var alle = data.vokabel;
+			for (i in alle) {
+        if (anzahlPaare>0) {
+				  memory_array.push(alle[i][sprache1]);
+          memory_id_array.push(sprache1 + '_' + alle[i].id);
+				  memory_array.push(alle[i][sprache2]);
+          memory_id_array.push(sprache2 + '_' + alle[i].id);
+          anzahlPaare--;
+        }
+			}
+    newBoard();
+		}
+	});
+};
+
+function kartenMischen(aKarte, aId){
+  var i = aKarte.length, j, temp;
+  while(--i > 0){
+      j = Math.floor(Math.random() * (i+1));
+      tempKarte = aKarte[j];
+      tempId = aId[j];
+      aKarte[j] = aKarte[i];
+      aId[j] = aId[i];
+      aKarte[i] = tempKarte;
+      aId[i] = tempId;
+  }
+}
+
+function newBoard(){
+  document.getElementById('memory_board').innerHTML = "";
+	tiles_flipped = 0;
+	var output = '';
+  kartenMischen(memory_array, memory_id_array);
+	for(var i = 0; i < memory_array.length; i++){
+		output += '<div id="'+memory_id_array[i]+'" onclick="memoryFlipTile(this,\''+memory_array[i]+'\')"></div>';
+	}
+  $('#memory_board').html(output);
+}
+function memoryFlipTile(tile,val){
+	if(tile.innerHTML == "" && memory_values.length < 2){
+		tile.style.background = '#FFF';
+		tile.innerHTML = val;
+		if(memory_values.length == 0){
+			memory_values.push(val);
+			memory_tile_ids.push(tile.id);
+		} else if(memory_values.length == 1){
+			memory_values.push(val);
+			memory_tile_ids.push(tile.id);
+			//if(memory_values[0] == memory_values[1]){
+      console.log(memory_tile_ids[0].substr(3), memory_tile_ids[1].substr(3), memory_tile_ids[0].substr(3) == memory_tile_ids[1].substr(3));
+      if(memory_tile_ids[0].substr(3) == memory_tile_ids[1].substr(3)){
+				tiles_flipped += 2;
+				// Clear both arrays
+				memory_values = [];
+        memory_tile_ids = [];
+				// Check to see if the whole board is cleared
+				if(tiles_flipped == memory_array.length){
+					alert("Gratuliere - wir starten neu ...");
+					document.getElementById('memory_board').innerHTML = "";
+					getVokabel('de','lt', 12);
+				}
+			} else {
+				function flip2Back(){
+
+            $('#'+memory_tile_ids[0]).css({'background': 'url(memory.jpg) no-repeat'}).html('');
+            $('#'+memory_tile_ids[1]).css({'background': 'url(memory.jpg) no-repeat'}).html('');
+
+				    // Clear both arrays
+				    memory_values = [];
+            memory_tile_ids = [];
+				}
+				setTimeout(flip2Back, 700);
+			}
+		}
+	}
+}
+</script>
+</head>
+<body>
+  <div>
+		<h1>Vokabel - Spiel</h1>
+		  <div id="myDiv"></div>
+			<fieldset>
+				<label for="sprache1">Sprache-1 wählen</label>
+				<select name="sprache1" id="sprache1"></select>
+        <br>
+				<label for="sprache2">Sprache-2 wählen</label>
+				<select name="sprache2" id="sprache2"></select>
+        <br>
+        <button id="starten">Spiel starten</button>
+        <button id="btn-auswahl">Home</button>
+			</fielset><br>
+
+		<div id="hinweis"></div>
+		<div id="fehler"></div>
+    <hr>
+    <div id="memory_board"></div>
+    <script>meineLanguages();</script>
+    <!--
+    <script>getVokabel('de','lt', 12);</script>
+    -->
+</body>
+</html>
