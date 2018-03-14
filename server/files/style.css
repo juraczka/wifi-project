@@ -1,32 +1,89 @@
+input[type=text], select {
+    width: 20%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+		font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+		font-size: 16px;
+}
+input[type=submit] {
+    width: 10%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
 
+input[type=submit]:hover {
+    background-color: #45a049;
+}
+label{
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	font-weight: bold;
+}
 
-*{ margin:0; padding:0; }
-select{ font:16px Arial; option: 16px Arial }
-body { font:16px Arial;
-			 padding-left: 150px;
-			 padding-right: 150px;
-			 padding-top: 100px;
-			 padding-bottom: 100px;
-       top:100px;
-       left:300px;
-       right:300px;
-       bottom:100px;
-       text-align:center;
+div {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+}
+div#memory_board{
+	background:#CCC;
+	border:#999 1px solid;
+	width:80%;
+	height:auto;
+	padding:24px;
+	margin:0px auto;
+}
+div#memory_board > div{
+	background: url(memory.jpg) no-repeat;
+	border:#000 1px solid;
+	width:71px;
+	height:71px;
+	float:left;
+	margin:10px;
+	padding:20px;
+	font-size:16px;
+  word-wrap: break-word;
+	cursor:pointer;
+	text-align:center;
+}
+#vokabeltab {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
 
-       align-items:center;
-       justify-content:center;
-       border: 1px solid red;
-       background: #f0f0f0;
-      }
+#vokabeltab td, #vokabeltab th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
 
-button { font:16px Arial; font-weight:bold; border:none; background:#473C8B;
-	color:#fff; margin:15px; padding:5px 25px; cursor:pointer; border-radius:15px; }
-h1 {color: #473C8B; font-size:18px; line-height:60px;  font-weight:bold;}
-#logo {	width:45px;	height:45px;}
-#accordion {
-	align-content: center;
-	padding: 2.2em 2.2em;
-	border-top: 15px;
-	border-bottom: 15px;
-	overflow: auto;
+#vokabeltab tr:nth-child(even){background-color: #f2f2f2;}
+
+#vokabeltab tr:hover {
+	background-color: #ddd;
+}
+
+#vokabeltab th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+h1{
+	background-color: #4CAF50;
+	font-size:50px;
+	text-align: center;
+	padding-top: 40px;
+	color: white;
+	height: 90px;
 }
